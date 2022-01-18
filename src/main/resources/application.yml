@@ -1,6 +1,40 @@
+# 포트 안에 컨텍스트 설정
+# 컨텍스트 : 내 프로젝트를 진입하기 위한 기본점 (context-path를 설정하지 않으면 "/"로 설정됨)
+server:
+  port: 8000
+  servlet:
+    context-path: /blog
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      
+# Prefix : 컨트롤러가 리턴을 할 때 앞에 붙여주는 경로명
+# Suffix : 컨트롤러가 리턴을 할 때 뒤에 붙여주는 경로명
 spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+      
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/blog?serverTimezone=Asia/Seoul
     username: root
     password: Dh1029Hj!@
+    
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update # create : 테이블을 새로 만들겠다는 뜻 (서버 킬때마다 새로 만들어짐. 그래서 최초 실행 시에만 create하고 이후에는 update 추)
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl # Entity(Table)를 만들 때 변수명 그대로 DB Field에 넣겠다.
+        # SpringPhysicalNamingStrategy 를 쓰면 myEmail 을 my_email 와 같이 바꿔줌
+      use-new-id-generator-mappings: false # Auto-Increment 를 어떤식으로 사용할지 방식 결정 (False : jpa가 사용하는 기본 넘버링 전략을 따라가지 않겠다.)
+    show-sql: true # DB가 create되거나 update 되는 것을 콘솔에 띄워
+    properties:
+      hibernate.format_sql: true # 콘솔에 뜨는 sql 문을 예쁘게 정렬해줌
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false

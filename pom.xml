@@ -26,6 +26,7 @@
 		</dependency>
 		 -->
 		<!-- JSP 템플릿 엔진 -->
+		<!--스프링부트는  기본적으로 jsp를 지원하지 않고 html을 지원하기 때문에 따로 의존성 설정이 필요-->
 		<dependency>
 		  <groupId>org.apache.tomcat.embed</groupId>
 		  <artifactId>tomcat-embed-jasper</artifactId>
@@ -43,10 +44,12 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		 
+		 <!-- 2022/01/06 로그인 처리 제거(임시)
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+		  -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
