@@ -22,9 +22,9 @@ import lombok.NoArgsConstructor;
 // ORM : 개발 언어 Object -> DB 로 Mapping 해주는 것
 // User Class 가 자동으로 MySQL에 테이블이 생성 (= Entity)
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Data // Getter + Setter
+@NoArgsConstructor // 빈 생성자
+@AllArgsConstructor  // 멤버 변수 모두를 받는 생성자
 @Builder
 //@DynamicInsert // Default 값 적용을 위해(값이 없으면 Default값 적용. 자세한 내용은 role 쪽 주석 참고)
 @Entity // ORM으로써 현재 클래스가 DB 내 테이블 클래스라는 것을 명시해주는 Entity가 맨 아래로 오는 것이 좋음
@@ -36,7 +36,7 @@ public class User {
 	// 해당 프로젝트에서 연결된 DB의 넘버링 전략을 따라가겠다 (IDENTITY)
 	private int id; // auto_increment
 	
-	@Column(nullable = false, length = 30) // 컬럼으로 설정하고 nullable=false, 길이는 최대 30
+	@Column(nullable = false, length = 30, unique = true) // 컬럼으로 설정하고 nullable=false, 길이는 최대 30
 	private String username; // User ID
 	
 	@Column(nullable = false, length = 100) // 나중에 PW를 Hash로 변경해서 비밀번호를 암호화할 예정이기 때문에 넉넉하게 부여
