@@ -11,20 +11,22 @@
 
 	<%@ include file="../layout/header.jsp"%>
 
-	<form action="/action_page.php" class="was-validated">
+	<form class="was-validated">
 		<div class="form-group">
 			<label for="email">Email:</label> <input type="email" class="form-control" id="email" placeholder="Enter Email" name="email" required>
 			<div class="valid-feedback">Valid.</div>
 			<div class="invalid-feedback">Please fill out this field.</div>
 		</div>
 		<div class="form-group">
-			<label for="pwd">Password:</label> <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd" required>
+			<label for="password">Password:</label> <input type="password" class="form-control" id="password" placeholder="Enter password" name="pswd" required>
 			<div class="valid-feedback">Valid.</div>
 			<div class="invalid-feedback">Please fill out this field.</div>
 		</div>
-		<button type="submit" class="btn btn-primary">로그인</button>
 	</form>
 
+	<button id="btn-login" class="btn btn-primary">로그인</button>
+
+	<script src="/js/user.js"></script>
 	<%@ include file="../layout/footer.jsp"%>
 </body>
 </html>
