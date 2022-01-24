@@ -12,12 +12,14 @@ import com.dong.newBlog.dto.ResponseDTO;
 @ControllerAdvice
 @RestController
 public class GlobalExceptionHandler {
-	
+
 	// value에 있는 Exception이 발생하면 자동으로 여기 있는 핸들러 내 해당 메서드로 전달을 해줌
 	@ExceptionHandler(value = Exception.class)
 	public void handleArgumentException(Exception e) {
 		ResponseDTO<String> error = new ResponseDTO<String>(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
-		System.out.println("Error Status : " + error.getStatus() + ", Error Message : " + error.getData() + " (중복 Email/ID 존재)");
-		//return new ResponseDTO<String>(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+		System.out.println(
+				"Error Status : " + error.getStatus() + ", Error Message : " + error.getData() + " (중복 Email/ID 존재)");
+		// return new ResponseDTO<String>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+		// e.getMessage());
 	}
 }

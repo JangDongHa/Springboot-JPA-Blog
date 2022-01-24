@@ -15,6 +15,8 @@
 <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> (ajax 인식을 못해서 위 스크릅트로 import) -->
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-expand-md bg-dark navbar-dark">
@@ -25,17 +27,18 @@
 		<div class="collapse navbar-collapse" id="collapsibleNavbar">
 
 			<!-- principal이 empty인지 아닌지 여부에 따라 다른 기능 제공 -->
+			<!-- Spring Security에서 /logout은 Default 제 -->
 			<c:choose>
 				<c:when test="${empty principal}">
 					<ul class="navbar-nav">
-						<li class="nav-item"><a class="nav-link" href="/loginForm">로그인</a></li>
-						<li class="nav-item"><a class="nav-link" href="/joinForm">회원가입</a></li>
+						<li class="nav-item"><a class="nav-link" href="/auth/loginForm">로그인</a></li>
+						<li class="nav-item"><a class="nav-link" href="/auth/joinForm">회원가입</a></li>
 					</ul>
 				</c:when>
 				<c:otherwise>
 					<ul class="navbar-nav">
-						<li class="nav-item"><a class="nav-link" href="/board/form">글쓰기</a></li>
-						<li class="nav-item"><a class="nav-link" href="/user/form">회원정보</a></li>
+						<li class="nav-item"><a class="nav-link" href="/board/saveForm">글쓰기</a></li>
+						<li class="nav-item"><a class="nav-link" href="/user/updateForm">회원정보</a></li>
 						<li class="nav-item"><a class="nav-link" href="/logout">로그아웃</a></li>
 					</ul>
 				</c:otherwise>

@@ -1,9 +1,8 @@
 package com.dong.newBlog.controller.api;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,12 +18,14 @@ public class UserApiController {
 	@Autowired
 	private UserService userService;
 
-	@PostMapping("/api/user")
+
+	// loginProc 를 만들지 않는 이유
+	// Spring Security 가 로그인 정보를 가로채게 할 것이기 때문에
+	@PostMapping("/auth/joinProc")
 	public ResponseDTO<Integer> save(@RequestBody User user) {
 		System.out.println("UserApiController : save()");
-		user.setRole(RoleType.USER);
-		int result = userService.insertUser(user);
-		return new ResponseDTO<Integer>(HttpStatus.OK.value(), result); // 해당 자바 오브젝트를 JSON으로 자동 변환(Jackson)
+		userService.insertUser(user);
+		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1); // 해당 자바 오브젝트를 JSON으로 자동 변환(Jackson)
 	}
 
 //	@PostMapping("/api/user/login")

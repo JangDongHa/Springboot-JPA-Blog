@@ -11,22 +11,26 @@
 
 	<%@ include file="../layout/header.jsp"%>
 
-	<form class="was-validated">
+	<form action="/auth/loginProc" method="post" class="was-validated">
 		<div class="form-group">
-			<label for="email">Email:</label> <input type="email" class="form-control" id="email" placeholder="Enter Email" name="email" required>
+			<label for="email">Email:</label> <input name="username" type="email" class="form-control" id="email" placeholder="Enter Email" name="email" required>
 			<div class="valid-feedback">Valid.</div>
 			<div class="invalid-feedback">Please fill out this field.</div>
 		</div>
 		<div class="form-group">
-			<label for="password">Password:</label> <input type="password" class="form-control" id="password" placeholder="Enter password" name="pswd" required>
+			<label for="password">Password:</label> <input name="password" type="password" class="form-control" id="password" placeholder="Enter password" name="pswd" required>
 			<div class="valid-feedback">Valid.</div>
 			<div class="invalid-feedback">Please fill out this field.</div>
 		</div>
+		<div class="form-group form-check">
+			<label name="remember" class="form-check-label"> <input class="form-check-input" type="checkbox" name="remember" required> I agree on blabla.
+				<div class="valid-feedback">Valid.</div>
+				<div class="invalid-feedback">Check this checkbox to continue.</div>
+			</label>
+		</div>
+		<button id="btn-login" class="btn btn-primary">로그인</button>
 	</form>
 
-	<button id="btn-login" class="btn btn-primary">로그인</button>
-
-	<script src="/js/user.js"></script>
 	<%@ include file="../layout/footer.jsp"%>
 </body>
 </html>
