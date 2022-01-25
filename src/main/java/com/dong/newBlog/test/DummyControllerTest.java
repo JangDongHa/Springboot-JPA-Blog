@@ -78,11 +78,11 @@ public class DummyControllerTest {
 	// URL은 /dummy/user+ ?page=숫자 <- 이런식으로 매핑하면 됨 (그냥 URL만 치면 ?page=0)
 	// Return 을 Page 형으로 받을 수 있지만 필요할 때 다시 학습
 	@GetMapping("/dummy/user")
-	public List<User> pageList(
+	public Page<User> pageList(
 			@PageableDefault(size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 		Page<User> pagingUser = userRepository.findAll(pageable);
 		// pagingUser.isFirst , isLast 등 여러가지 메서드들을 제공해줌
-		return pagingUser.getContent();
+		return pagingUser;
 		// return userRepository.findAll(pageable).getContent();
 	}
 

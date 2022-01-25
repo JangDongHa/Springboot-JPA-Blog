@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
 	public void handleArgumentException(Exception e) {
 		ResponseDTO<String> error = new ResponseDTO<String>(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
 		System.out.println(
-				"Error Status : " + error.getStatus() + ", Error Message : " + error.getData() + " (중복 Email/ID 존재)");
+				"Error Status : " + error.getStatus() + ", Error Message : " + error.getData());
 		// return new ResponseDTO<String>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
 		// e.getMessage());
 	}
