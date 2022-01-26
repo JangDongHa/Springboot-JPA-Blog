@@ -3,6 +3,7 @@ package com.dong.newBlog.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,6 +31,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return new BCryptPasswordEncoder(); // BCrypt : Security가 들고있는 메소드
 	}
 	
+	@Bean // Bean 등록하면 어디서든 사용 가능
+	@Override // authenticationManager를 사용하기 위해 설정
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		// TODO Auto-generated method stub
+		return super.authenticationManagerBean();
+	}
+
 	// Security가 대신 로그인을 하기 위해 아이디/패스워드를 가로채게 되는데
 	// 해당 패스워드가 무엇으로 해시가 되서 회원가입이 되었는지 알아야함
 	@Override

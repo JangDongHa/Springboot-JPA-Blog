@@ -3,6 +3,9 @@ let index = {
 		$("#btn-save").on("click", () => { // function(){} 대신 ()=>{} 을 쓰는 이유 : this를 binding 하기 위해
 			this.save();
 		}); // btn-save가 클릭이 되면
+		$("#btn-update").on("click", () => {
+			this.update();
+		});
 	},
 
 	save: function() {
@@ -33,9 +36,30 @@ let index = {
 			location.href = "/";
 		}).fail(function(error) {
 			// 실패 시 (서버로부터 데이터 응답이 오지 않은 경우)
-			alert("중복된 ID 혹은 Email이 존재합니다.") // 그 이상의 오류가 존재할 수 있으니 책갈피1
+			alert("중복된 ID 혹은 Email이 존재합니다."); // 그 이상의 오류가 존재할 수 있으니 책갈피1
 			//alert(JSON.stringify(error))
 		}); // ajax 통신을 이용해서 3개의 데이터를 json으로 변경하여 insert 요청
+	},
+	
+	update: function() {
+		let data = {
+			email: $("#email").val(),
+			username: $("#username").val(),
+			password: $("#password").val()
+		}
+
+		$.ajax({
+			type: "PUT",
+			url: "/user",
+			data: JSON.stringify(data),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json"
+		}).done(function(resp) {
+			alert("회원 수정 완료 ");
+			location.href = "/";
+		}).fail(function(error) {
+			alert("회원 수정 실패");
+		});
 	}
 	
 }
