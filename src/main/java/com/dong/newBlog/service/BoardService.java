@@ -1,6 +1,5 @@
 package com.dong.newBlog.service;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dong.newBlog.dto.ReplySaveRequestDTO;
 import com.dong.newBlog.model.Board;
+import com.dong.newBlog.model.Reply;
 import com.dong.newBlog.model.User;
 import com.dong.newBlog.repository.BoardRepository;
+import com.dong.newBlog.repository.ReplyRepository;
+import com.dong.newBlog.repository.UserRepository;
 
 
 @Service
@@ -20,6 +23,12 @@ public class BoardService {
 	@Autowired
 	private BoardRepository boardRepository;
 	
+	@Autowired
+	private ReplyRepository replyRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
 	// 글쓰기
 	@Transactional
 	public void writing(Board board, User user) { // title, content
@@ -27,6 +36,20 @@ public class BoardService {
 		board.setUser(user);
 		boardRepository.save(board);
 	}
+	
+	// 댓글쓰기
+		@Transactional
+		public void writingReply(ReplySaveRequestDTO replySaveRequestDTO) { // content, username
+			Board board = viewDetails(replySaveRequestDTO.getBoardId());
+			User user = userRepository.findById(replySaveRequestDTO.getUserId()).orElseThrow(()->{
+				return new IllegalArgumentException("(BoardService.writingReply) can not find userId (id:" + replySaveRequestDTO.getUserId() + ")");
+			});
+			
+			Reply reply = new Reply();
+			reply.update(user, board, replySaveRequestDTO.getContent());
+		
+			replyRepository.save(reply);
+		}
 	
 	@Transactional(readOnly = true)
 	public Page<Board> listContents(Pageable pageable){
@@ -46,6 +69,12 @@ public class BoardService {
 	}
 	
 	@Transactional
+	public void deleteReply(int id) {
+		
+		replyRepository.deleteById(id);
+	}
+	
+	@Transactional
 	public void update(int id, Board requestBoard) {
 		Board board = boardRepository.findById(id).orElseThrow(()->{
 			return new IllegalArgumentException("(BoardService.update) Can not Find Id : " + id);
@@ -55,5 +84,9 @@ public class BoardService {
 		// 해당 함수로 종료시(Service가 종료될 때) 트랙잭션이 종료
 		// 이 때 Dirty Checking 발생 (영속화 되어있는 Board값이 바뀌었기 때문에)
 		// 따라서, 자동으로 업데이트 되서 Flush(Commit)가 진행
+	}
+	
+	public Reply findReplyId(int replyId) {
+		return replyRepository.getById(replyId);
 	}
 }

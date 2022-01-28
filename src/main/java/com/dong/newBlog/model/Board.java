@@ -1,6 +1,7 @@
 package com.dong.newBlog.model;
 
 import java.sql.Timestamp;
+
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,9 +14,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,7 +57,9 @@ public class Board {
 	// Reply Table에 있는 board를 참조할 것
 	// MappedBy가 있으면 연관관계의 주인이 아니다. (FK가 아니므로 DB에 컬럼을 만들지 않음)
 	@OneToMany(mappedBy = "board", fetch = FetchType.EAGER) // JoinColumn을 쓸 필요가 없음(쓴다면 DB 1정규화->원자성 위배)
-	private List<Reply> reply; // 많은 Reply는 하나의 Board에 담길 수 있기 때문에(ONETOMANY)
+	@JsonIgnoreProperties({"board"}) // Jackson에서 Reply 를 get 할 때 board 데이터는 get 하지 말고 ignore 하라(무한 참조 방지용)
+	@OrderBy("id desc") // ID 값으로 내림차순
+	private List<Reply> replys; // 많은 Reply는 하나의 Board에 담길 수 있기 때문에(ONETOMANY)
 
 	@CreationTimestamp
 	private Timestamp createDate;

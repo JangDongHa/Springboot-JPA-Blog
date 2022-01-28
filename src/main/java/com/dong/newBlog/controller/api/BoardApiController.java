@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dong.newBlog.config.auth.PrincipalDetail;
 import com.dong.newBlog.config.auth.PrincipalDetailService;
+import com.dong.newBlog.dto.ReplySaveRequestDTO;
 import com.dong.newBlog.dto.ResponseDTO;
 import com.dong.newBlog.model.Board;
+import com.dong.newBlog.model.Reply;
 import com.dong.newBlog.model.RoleType;
 import com.dong.newBlog.model.User;
 import com.dong.newBlog.service.BoardService;
@@ -55,6 +57,24 @@ public class BoardApiController {
 		Board currentBoard = boardService.viewDetails(id);
 		if (principal.getName().equals(currentBoard.getUser().getEmail())) // 현재 세션 이메일과 보드 내 이메일이 같을 경우에만 삭제 허용
 			boardService.update(id, board);
+		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1);
+	}
+	
+	// Data 를 받을 때에는 컨트롤러에서 dto를 만들어서 받는 것이 좋음
+	@PostMapping("/api/board/{boardId}/reply")
+	public ResponseDTO<Integer> replySave(@RequestBody ReplySaveRequestDTO replyDTO, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+		System.out.println("BoardReplyApiController : replySave()");
+		replyDTO.setUserId(principalDetail.getUser().getId());
+		boardService.writingReply(replyDTO);
+		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1);
+	}
+	
+	@DeleteMapping("/api/board/{boardId}/reply/{replyId}")
+	public ResponseDTO<Integer> deleteReply(@PathVariable int boardId, @PathVariable Integer replyId, Principal principal){
+		System.out.println("BoardApiController : deleteReply()");
+		Reply currentReply = boardService.findReplyId(replyId);
+		if (currentReply.getUser().getEmail().equals(principal.getName()))
+			boardService.deleteReply(replyId);
 		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1);
 	}
 }

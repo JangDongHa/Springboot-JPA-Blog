@@ -47,14 +47,28 @@
 						<td colspan="3">${board.content}</td>
 					</tr>
 					<tr>
-						<td colspan="4" class="text-center"><input type="button" class="btn btn-success" value="답글 쓰기" onclick="location.href='#'"> 
-						<c:if test="${board.user.id == principal.user.id}">
-						<a href="/board/${board.id}/updateForm" type="button" class="btn btn-warning" onclick="#" >수정하기</a>
-						<input id="btn-delete" type="button" class="btn btn-danger" value="삭제하기">
-						</c:if>
-						<input type="button" class="btn btn-primary" value="목록보기" onclick="history.back()">
-						</td>
+						<th class="success">댓글</th>
+						<td colspan="3"></td>
 					</tr>
+					<c:forEach var="reply" items="${board.replys}">
+						<tr>
+							<th class="success">${reply.user.username }</th>
+							<td colspan="3">${reply.content}</td>
+							<td><input id="btn-reply-delete" type="button" value="삭제" class="btn btn-danger" onclick="#"></td>
+							<input type="hidden" id="replyId" value="${reply.id}">
+						</tr>
+					</c:forEach>
+					<tr>
+							<th class="success">답글</th>
+							<td colspan="3"><textarea id="reply-content" cols="80" rows="3"></textarea></td>
+						</tr>
+					<tr>
+						<td colspan="4" class="text-center"><input id="btn-reply-save" type="button" class="btn btn-success" value="답글 쓰기" onclick="location.href='#'"> <c:if test="${board.user.id == principal.user.id}">
+								<a href="/board/${board.id}/updateForm" type="button" class="btn btn-warning" onclick="#">수정하기</a>
+								<input id="btn-delete" type="button" class="btn btn-danger" value="삭제하기">
+							</c:if> <input type="button" class="btn btn-primary" value="목록보기" onclick="history.back()"></td>
+					</tr>
+					<input type="hidden" id="boardId" value="${board.id}" />
 				</table>
 			</div>
 

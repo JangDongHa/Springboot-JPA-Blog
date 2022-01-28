@@ -1,6 +1,7 @@
 package com.dong.newBlog.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,9 @@ import com.dong.newBlog.repository.UserRepository;
 // Spring이 Component Scan을 통해 bean에 등록 (= IOC)
 @Service
 public class UserService {
+	
+	@Value("${kakao.key}")
+	private String kakaoKey;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -23,6 +27,12 @@ public class UserService {
 	@Autowired
 	private BCryptPasswordEncoder encoder;
 	
+	@Transactional (readOnly = true)
+	public User findUser(String email) {
+		return userRepository.findByEmail(email).orElseGet(()->{
+			return null;
+		}); // get 하면 없으면 null을 뿌려줌 (확실x), orElseGet은 해당 메서드와 같이 null을 정의해줄 때 사용
+	}
 
 	// 회원가입 서비스
 	@Transactional
@@ -33,13 +43,19 @@ public class UserService {
 	}
 	
 	@Transactional
-	public void updateUser(User user) {
+	public User updateUser(User user) {
 		// 수정 시에는 영속성 컨텍스트 User Object를 영속화시키고 영속화된 User Object를 수정
 		User persistenceUser = userRepository.findByEmail(user.getEmail()).orElseThrow(()->{
 			return new IllegalArgumentException("(UserService.updateUser) Can not Find Email : " + user.getEmail());
 		});
-		persistenceUser.setPassword(encoder.encode(user.getPassword())); // 비밀번호 인코딩
+		if (persistenceUser.getOauth() == null)
+			persistenceUser.setPassword(encoder.encode(user.getPassword())); // 비밀번호 인코딩
+		else
+			user.setPassword(kakaoKey);
 		persistenceUser.setUsername(user.getUsername());
+		
+		return user;
+		
 		
 		// 현재 세션 Authentication Token 확인
 		// System.out.println("test : " + SecurityContextHolder.getContext().getAuthentication().getName());

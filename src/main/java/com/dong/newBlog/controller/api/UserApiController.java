@@ -43,13 +43,16 @@ public class UserApiController {
 			HttpSession session) {
 		System.out.println("UserApiController : update()");
 		if (principal.getUsername().equals(user.getEmail()))
-			userService.updateUser(user);
+			user = userService.updateUser(user);
 		// 여기서는 Transaction이 종료되기 때문에 DB에 있는 값은 변경이 되었지cff만
 		// 세션값은 변경되지 않은 상태
 		
+		System.out.println("userE : " + user.getEmail());
+		System.out.println("userP : " + user.getPassword());
 		
 		// 세션 등록 (서비스 단에서 하게 되버리면 수정된 정보가 적용(Commit)되지 않은 상태에서 검사를 진행하므로
 		// 인증이 실패할 수 있기 때문에 Service->Controller로 돌아온 후에 토큰을 적용시켜주는 것이 좋음
+		// 여기 토큰 등록할 때 넣는 getPassword는 정제되기 전(인코딩 되기 전 순수한 패스워드) 패스워드를 넣는 것
 		Authentication authentication = authenticationManager.
 				authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);

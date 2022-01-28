@@ -22,11 +22,14 @@
 			<div class="valid-feedback">Valid.</div>
 			<div class="invalid-feedback">Please fill out this field.</div>
 		</div>
+		
+		<c:if test="${empty principal.user.oauth}">
 		<div class="form-group">
 			<label for="password">Password:</label> <input type="password" class="form-control" id="password" placeholder="Enter password" name="pswd" required>
 			<div class="valid-feedback">Valid.</div>
 			<div class="invalid-feedback">Please fill out this field.</div>
 		</div>
+		</c:if>
 	</form>
 	<button id="btn-update" class="btn btn-primary">수정</button>
 	

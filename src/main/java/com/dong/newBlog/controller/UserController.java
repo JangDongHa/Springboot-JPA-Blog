@@ -1,17 +1,19 @@
 package com.dong.newBlog.controller;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.dong.newBlog.model.KakaoProfile;
@@ -30,8 +32,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 public class UserController {
 	
+	@Value("${kakao.key}")
+	private String kakaoKey;
+	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
 	@GetMapping("/auth/joinForm")
 	public String joinForm() {
@@ -44,8 +52,9 @@ public class UserController {
 	}
 	
 	// 매개변수에 기본 자료형 매개변수를 받으면 자동으로 쿼리스트링에서 찾음
+	// public @ResponseBody String kakaoCallback(String code) 이런식으로 하면 rest처럼 사용가능
 	@GetMapping("/auth/kakao/callback")
-	public @ResponseBody String kakaoCallback(String code) throws JsonMappingException, JsonProcessingException { // Data를 리턴해주는 컨트롤러 함수가 됨(Rest처럼)
+	public String kakaoCallback(String code) throws JsonMappingException, JsonProcessingException { // Data를 리턴해주는 컨트롤러 함수가 됨(Rest처럼)
 		
 		// POST 방식으로 Key=Value 타입의 데이터를 요청해야함 (카카오쪽으로)
 		// 이 때 필요한 라이브러리 : RestTemplate
@@ -118,21 +127,31 @@ public class UserController {
 			e.printStackTrace();
 		}
 		
+		String kakaoEmail = kakaoProfile.getKakao_account().getEmail();
 		// User Object에 필요한 정보 : username, password, email
 		System.out.println("Kakao ID : " + kakaoProfile.getId());
-		System.out.println("Kakao Email : " + kakaoProfile.getKakao_account().getEmail() + "_" + kakaoProfile.getId());
+		System.out.println("Kakao Email : " + kakaoProfile.getKakao_account().getEmail());
 		System.out.println("Kakao username : " + kakaoProfile.getProperties().getNickname());
-		String tempPassword = UUID.randomUUID().toString();
-		System.out.println("Password : " + tempPassword);
+		//String tempPassword = UUID.randomUUID().toString();
+		System.out.println("Password : kakaoKey");
 		
 		User kakaoUser = User.builder()
 				.username(kakaoProfile.getProperties().getNickname())
-				.password(tempPassword)
-				.email(kakaoProfile.getKakao_account().getEmail())
+				.password(kakaoKey)
+				.email(kakaoEmail)
+				.oauth("kakao")
 				.build();
+		// 가입자 혹은 비가입자인지 확인
+		if (userService.findUser(kakaoEmail) == null) { // This is new User
+			userService.insertUser(kakaoUser);
+		}
+		else { // This is origin User
+			Authentication authentication = authenticationManager.
+					authenticate(new UsernamePasswordAuthenticationToken(kakaoUser.getEmail(), kakaoKey));
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+		}
 		
-		userService.insertUser(kakaoUser);
-		return response2.getBody();
+		return "redirect:/";
 	}
 	
 	@GetMapping("/user/updateForm")
