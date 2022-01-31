@@ -46,8 +46,13 @@ public class BoardApiController {
 		System.out.println("BoardApiController : delete()");
 		//Object auth = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Board currentBoard = boardService.viewDetails(id);
-		if (principal.getName().equals(currentBoard.getUser().getEmail())) // 현재 세션 이메일과 보드 내 이메일이 같을 경우에만 삭제 허용
+		if (principal.getName().equals(currentBoard.getUser().getEmail())) {// 현재 세션 이메일과 보드 내 이메일이 같을 경우에만 삭제 허용
 			boardService.delete(id);
+		}
+		else {
+			return new ResponseDTO<Integer>(HttpStatus.INTERNAL_SERVER_ERROR.value(), -1);
+		}
+			
 		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1);
 	}
 	
@@ -70,11 +75,15 @@ public class BoardApiController {
 	}
 	
 	@DeleteMapping("/api/board/{boardId}/reply/{replyId}")
-	public ResponseDTO<Integer> deleteReply(@PathVariable int boardId, @PathVariable Integer replyId, Principal principal){
+	public ResponseDTO<Integer> deleteReply(@PathVariable int boardId, @PathVariable Integer replyId, Principal principal) throws Exception{
 		System.out.println("BoardApiController : deleteReply()");
 		Reply currentReply = boardService.findReplyId(replyId);
-		if (currentReply.getUser().getEmail().equals(principal.getName()))
+		if (currentReply.getUser().getEmail().equals(principal.getName())) {
 			boardService.deleteReply(replyId);
+		}
+		else 
+			throw new Exception();
+			
 		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1);
 	}
 }

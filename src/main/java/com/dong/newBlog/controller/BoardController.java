@@ -17,11 +17,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.dong.newBlog.config.auth.PrincipalDetail;
 import com.dong.newBlog.model.Board;
 import com.dong.newBlog.service.BoardService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Sort;
 
 
 @Controller
 public class BoardController {
+	
+	/*//해당 생성자 메서드를 자동으로 해주는 것이 Autowired
+	 // DI가 작동되는 원리
+	 // 여기 들어오는 매개변수는 어차피 IOC 내 bean으로 등록되어 있기 때문에 그걸 들고옴
+	 // 또 다른 방법 : @RequiredArgsConstructor를 붙이고(클래스 위에)  DI할 값을 final로 선언
+	private BoardService boardService;
+	public BoardController (BoardService boardService) {
+		this.boardService = boardService;
+	}
+	*/
 	
 	@Autowired
 	private BoardService boardService;
@@ -40,6 +53,7 @@ public class BoardController {
 	
 	@GetMapping("/board/{id}")
 	public String boardFindById(Model model, @PathVariable int id) {
+		boardService.raiseViewCount(id);
 		model.addAttribute("board", boardService.viewDetails(id));
 		return "board/detail";
 	}

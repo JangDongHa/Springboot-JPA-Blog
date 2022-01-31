@@ -16,19 +16,18 @@ import com.dong.newBlog.repository.BoardRepository;
 import com.dong.newBlog.repository.ReplyRepository;
 import com.dong.newBlog.repository.UserRepository;
 
-
 @Service
 public class BoardService {
 
 	@Autowired
 	private BoardRepository boardRepository;
-	
+
 	@Autowired
 	private ReplyRepository replyRepository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	// 글쓰기
 	@Transactional
 	public void writing(Board board, User user) { // title, content
@@ -36,47 +35,39 @@ public class BoardService {
 		board.setUser(user);
 		boardRepository.save(board);
 	}
-	
+
 	// 댓글쓰기
-		@Transactional
-		public void writingReply(ReplySaveRequestDTO replySaveRequestDTO) { // content, username
-			Board board = viewDetails(replySaveRequestDTO.getBoardId());
-			User user = userRepository.findById(replySaveRequestDTO.getUserId()).orElseThrow(()->{
-				return new IllegalArgumentException("(BoardService.writingReply) can not find userId (id:" + replySaveRequestDTO.getUserId() + ")");
-			});
-			
-			Reply reply = new Reply();
-			reply.update(user, board, replySaveRequestDTO.getContent());
-		
-			replyRepository.save(reply);
-		}
-	
+	@Transactional
+	public void writingReply(ReplySaveRequestDTO rDTO) { // content, username
+		replyRepository.mSave(rDTO.getUserId(), rDTO.getBoardId(), rDTO.getContent());
+	}
+
 	@Transactional(readOnly = true)
-	public Page<Board> listContents(Pageable pageable){
+	public Page<Board> listContents(Pageable pageable) {
 		return boardRepository.findAll(pageable);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Board viewDetails(int id) {
-		return boardRepository.findById(id).orElseThrow(()->{
+		return boardRepository.findById(id).orElseThrow(() -> {
 			return new IllegalArgumentException("(BoardService.viewDetails) Can not Find Id : " + id);
 		});
 	}
-	
+
 	@Transactional
 	public void delete(int id) {
 		boardRepository.deleteById(id);
 	}
-	
+
 	@Transactional
 	public void deleteReply(int id) {
-		
+
 		replyRepository.deleteById(id);
 	}
-	
+
 	@Transactional
 	public void update(int id, Board requestBoard) {
-		Board board = boardRepository.findById(id).orElseThrow(()->{
+		Board board = boardRepository.findById(id).orElseThrow(() -> {
 			return new IllegalArgumentException("(BoardService.update) Can not Find Id : " + id);
 		}); // 영속화 진행
 		board.setTitle(requestBoard.getTitle());
@@ -86,6 +77,15 @@ public class BoardService {
 		// 따라서, 자동으로 업데이트 되서 Flush(Commit)가 진행
 	}
 	
+	@Transactional
+	public void raiseViewCount(int id) {
+		Board board = boardRepository.findById(id).orElseThrow(() -> {
+			return new IllegalArgumentException("(BoardService.update) Can not Find Id : " + id);
+		}); // 영속화 진행
+		
+		board.setCount(board.getCount()+1);
+	}
+
 	public Reply findReplyId(int replyId) {
 		return replyRepository.getById(replyId);
 	}

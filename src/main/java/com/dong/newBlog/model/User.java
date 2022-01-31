@@ -9,6 +9,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -26,6 +28,16 @@ import lombok.NoArgsConstructor;
 @Builder
 //@DynamicInsert // Default 값 적용을 위해(값이 없으면 Default값 적용. 자세한 내용은 role 쪽 주석 참고)
 @Entity // ORM으로써 현재 클래스가 DB 내 테이블 클래스라는 것을 명시해주는 Entity가 맨 아래로 오는 것이 좋음
+//@Table( // 두 개 이상의 컬럼이 같은지 검사할 때
+// unique와의 차이점은 unique는 하나라도 같을 시 ERROR, UniqueContraint는 둘 다가 같아야 ERROR
+//		name = "User",
+//		uniqueConstraints = {
+//				@UniqueConstraint(
+//							name =  "uniqueKey",
+//							columnNames= {"username","email"}
+//						)
+//		}
+//		)
 public class User {
 	// ID와 CreateDate 는 둘 다 자동으로 설정되기 때문에 값을 넣어주지 않아도 자동으로 저장이 됨
 
@@ -40,7 +52,7 @@ public class User {
 	@Column(nullable = false, length = 100) // 나중에 PW를 Hash로 변경해서 비밀번호를 암호화할 예정이기 때문에 넉넉하게 부여
 	private String password; // Password
 
-	@Column(nullable = false, length = 50)
+	@Column(nullable = false, length = 50, unique = true)
 	private String email; // Email
 	
 	@Column()

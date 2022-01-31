@@ -145,11 +145,9 @@ public class UserController {
 		if (userService.findUser(kakaoEmail) == null) { // This is new User
 			userService.insertUser(kakaoUser);
 		}
-		else { // This is origin User
-			Authentication authentication = authenticationManager.
-					authenticate(new UsernamePasswordAuthenticationToken(kakaoUser.getEmail(), kakaoKey));
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-		}
+		Authentication authentication = authenticationManager.
+				authenticate(new UsernamePasswordAuthenticationToken(kakaoUser.getEmail(), kakaoKey));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
 		return "redirect:/";
 	}
@@ -157,6 +155,11 @@ public class UserController {
 	@GetMapping("/user/updateForm")
 	public String updateForm() {
 		return "user/updateForm";
+	}
+	
+	@GetMapping("/user/authEmail")
+	public String authEmailForm() {
+		return "user/authEmail";
 	}
 	
 }

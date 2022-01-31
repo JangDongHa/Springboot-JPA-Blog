@@ -3,6 +3,7 @@ package com.dong.newBlog.controller.api;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.AbstractAuditable_;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +35,14 @@ public class UserApiController {
 	@PostMapping("/auth/joinProc")
 	public ResponseDTO<Integer> save(@RequestBody User user) {
 		System.out.println("UserApiController : save()");
-		userService.insertUser(user);
+		
+		// 바로 로그인 처리를 하려면 Decode 된 Password가 필요하기 때문
+		String userPass = userService.insertUser(user);
+		
+		// 회원가입 이후 바로 로그인 처리
+		Authentication authentication = authenticationManager.
+				authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), userPass));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1); // 해당 자바 오브젝트를 JSON으로 자동 변환(Jackson)
 	}
 	
@@ -44,7 +52,7 @@ public class UserApiController {
 		System.out.println("UserApiController : update()");
 		if (principal.getUsername().equals(user.getEmail()))
 			user = userService.updateUser(user);
-		// 여기서는 Transaction이 종료되기 때문에 DB에 있는 값은 변경이 되었지cff만
+		// 여기서는 Transaction이 종료되기 때문에 DB에 있는 값은 변경이 되었지만
 		// 세션값은 변경되지 않은 상태
 		
 		System.out.println("userE : " + user.getEmail());
@@ -63,6 +71,12 @@ public class UserApiController {
 //		securityContext.setAuthentication(authentication); // 강제 주입
 //		session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext); // 세션에 securityContext 주입
 //		현재는 SPRING_SECURITY_CONTEXT에 직접 접근이 불가능해서 사용할 수 없음
+		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1);
+	}
+	
+	@PostMapping("/api/user/authEmail")
+	public ResponseDTO<Integer> authEmail(@RequestBody String email){
+		System.out.println("Email is " + email);
 		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1);
 	}
 

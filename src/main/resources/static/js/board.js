@@ -12,9 +12,6 @@ let index = {
 		$("#btn-reply-save").on("click", () => {
 			this.replySave();
 		});
-		$("#btn-reply-delete").on("click", () => {
-			this.deleteReply();
-		});
 	},
 
 	save: function() {
@@ -97,9 +94,7 @@ let index = {
 		});
 	},
 
-	deleteReply: function() {
-		let boardId = $("#boardId").val();
-		let replyId = $("#replyId").val();
+	replyDelete: function(boardId, replyId) {
 		$.ajax({
 			type: "DELETE",
 			url: `/api/board/${boardId}/reply/${replyId}`,
@@ -108,8 +103,7 @@ let index = {
 			alert("댓글 삭제가 완료되었습니다. ");
 			location.href = `/board/${boardId}`;
 		}).fail(function(error) {
-			alert("댓글 삭제 실패!");
-			alert(error);
+			alert("삭제 권한이 없습니다.");
 		});
 	}
 

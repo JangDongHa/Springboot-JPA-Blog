@@ -142,4 +142,7 @@ public class DummyControllerTest {
 		}
 		return "Joined in my Blog Complete";
 	}
+	
+	
+	
 }

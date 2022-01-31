@@ -6,6 +6,9 @@ let index = {
 		$("#btn-update").on("click", () => {
 			this.update();
 		});
+		$("#btn-auth").on("click", () => {
+			this.authE();
+		});
 	},
 
 	save: function() {
@@ -36,7 +39,7 @@ let index = {
 			location.href = "/";
 		}).fail(function(error) {
 			// 실패 시 (서버로부터 데이터 응답이 오지 않은 경우)
-			alert("중복된 ID 혹은 Email이 존재합니다."); // 그 이상의 오류가 존재할 수 있으니 책갈피1
+			alert("중복된 Username 혹은 Email이 존재합니다."); // 그 이상의 오류가 존재할 수 있으니 책갈피1
 			//alert(JSON.stringify(error))
 		}); // ajax 통신을 이용해서 3개의 데이터를 json으로 변경하여 insert 요청
 	},
@@ -60,6 +63,25 @@ let index = {
 		}).fail(function(error) {
 			alert("회원 수정 실패");
 		});
+	},
+	
+	authE: function() {
+		let data = $("#email").val()
+		
+		alert(data);
+
+		$.ajax({
+			type: "POST",
+			url: "/api/user/authEmail",
+			data: JSON.stringify(data), 
+			contentType: "application/json; charset=utf-8", 
+			dataType: "json" 
+		}).done(function(resp) {
+			alert("Email Authentication");
+			location.href = "/";
+		}).fail(function(error) {
+			alert("Error Email Auth");
+		}); 
 	}
 	
 }

@@ -36,10 +36,12 @@ public class UserService {
 
 	// 회원가입 서비스
 	@Transactional
-	public void insertUser(User user) {
+	public String insertUser(User user) {
+		String decodePass = user.getPassword();
 		user.setRole(RoleType.USER); // 권한 설정
 		user.setPassword(encoder.encode(user.getPassword())); // 비밀번호 해싱
 		userRepository.save(user);
+		return decodePass;
 	}
 	
 	@Transactional
