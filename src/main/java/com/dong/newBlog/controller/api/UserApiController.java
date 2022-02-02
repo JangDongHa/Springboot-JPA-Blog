@@ -3,7 +3,6 @@ package com.dong.newBlog.controller.api;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.AbstractAuditable_;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dong.newBlog.config.auth.PrincipalDetail;
 import com.dong.newBlog.dto.ResponseDTO;
 import com.dong.newBlog.model.User;
+import com.dong.newBlog.service.MailSendService;
 import com.dong.newBlog.service.UserService;
 
 @RestController
@@ -28,6 +28,7 @@ public class UserApiController {
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
 
 
 	// loginProc 를 만들지 않는 이유
@@ -35,14 +36,13 @@ public class UserApiController {
 	@PostMapping("/auth/joinProc")
 	public ResponseDTO<Integer> save(@RequestBody User user) {
 		System.out.println("UserApiController : save()");
+		user.setAuthKey(null); // XSS 방지
+		user.setAuthStatus(false);
 		
-		// 바로 로그인 처리를 하려면 Decode 된 Password가 필요하기 때문
-		String userPass = userService.insertUser(user);
+		if (userService.findUser(user.getEmail()) == null)
+			userService.insertUser(user);
 		
-		// 회원가입 이후 바로 로그인 처리
-		Authentication authentication = authenticationManager.
-				authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), userPass));
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
 		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1); // 해당 자바 오브젝트를 JSON으로 자동 변환(Jackson)
 	}
 	
@@ -51,7 +51,7 @@ public class UserApiController {
 			HttpSession session) {
 		System.out.println("UserApiController : update()");
 		if (principal.getUsername().equals(user.getEmail()))
-			user = userService.updateUser(user);
+			user = userService.updateUser(user, true);
 		// 여기서는 Transaction이 종료되기 때문에 DB에 있는 값은 변경이 되었지만
 		// 세션값은 변경되지 않은 상태
 		
@@ -79,6 +79,8 @@ public class UserApiController {
 		System.out.println("Email is " + email);
 		return new ResponseDTO<Integer>(HttpStatus.OK.value(), 1);
 	}
+	
+
 
 //	@PostMapping("/api/user/login")
 //	public ResponseDTO<Integer> login(@RequestBody User user, HttpSession session) { // DI로 세션을 받아도 됨

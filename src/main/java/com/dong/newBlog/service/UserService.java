@@ -27,6 +27,9 @@ public class UserService {
 	@Autowired
 	private BCryptPasswordEncoder encoder;
 	
+	@Autowired
+	private MailSendService mailSendService;
+	
 	@Transactional (readOnly = true)
 	public User findUser(String email) {
 		return userRepository.findByEmail(email).orElseGet(()->{
@@ -40,19 +43,22 @@ public class UserService {
 		String decodePass = user.getPassword();
 		user.setRole(RoleType.USER); // 권한 설정
 		user.setPassword(encoder.encode(user.getPassword())); // 비밀번호 해싱
+		String authKey = mailSendService.sendAuthMail(user);
+		user.setAuthKey(authKey);
 		userRepository.save(user);
 		return decodePass;
 	}
 	
+	
 	@Transactional
-	public User updateUser(User user) {
+	public User updateUser(User user, boolean passwordChange) {
 		// 수정 시에는 영속성 컨텍스트 User Object를 영속화시키고 영속화된 User Object를 수정
 		User persistenceUser = userRepository.findByEmail(user.getEmail()).orElseThrow(()->{
 			return new IllegalArgumentException("(UserService.updateUser) Can not Find Email : " + user.getEmail());
 		});
-		if (persistenceUser.getOauth() == null)
+		if (persistenceUser.getOauth() == null && passwordChange) // oAuth 유저가 아닌 경우
 			persistenceUser.setPassword(encoder.encode(user.getPassword())); // 비밀번호 인코딩
-		else
+		else if (persistenceUser.getOauth() != null) // oAuth 유저인 경우
 			user.setPassword(kakaoKey);
 		persistenceUser.setUsername(user.getUsername());
 		

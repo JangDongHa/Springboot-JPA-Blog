@@ -57,6 +57,12 @@ public class User {
 	
 	@Column()
 	private String oauth; // kakao, google ...
+	
+	@Column()
+	private String authKey;
+	
+	@Column(nullable = false)
+	private boolean authStatus;
 
 	// Repository에 적용할 때 기본적으로 role 값을 설정해주지 않으면 null이 들어감
 	// 그 이유는 기본적으로 repository.save(객체)를 진행하면 객체 전체에 대한 값을 적용하게 되는데

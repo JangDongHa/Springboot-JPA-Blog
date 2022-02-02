@@ -55,8 +55,9 @@ public class PrincipalDetail implements UserDetails{
 	// 계정이 활성화(사용가능) 되어있는지 리턴(true : 활성화)
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return true;
+		if (user.isAuthStatus())
+			return true;
+		return false;
 	}
 	
 	// 계정이 가지고 있는 권한 목록을 Return

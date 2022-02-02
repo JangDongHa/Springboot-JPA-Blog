@@ -26,7 +26,7 @@ spring:
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: update # create : 테이블을 새로 만들겠다는 뜻 (서버 킬때마다 새로 만들어짐. 그래서 최초 실행 시에만 create하고 이후에는 update 추)
+      ddl-auto: create # create : 테이블을 새로 만들겠다는 뜻 (서버 킬때마다 새로 만들어짐. 그래서 최초 실행 시에만 create하고 이후에는 update 추)
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl # Entity(Table)를 만들 때 변수명 그대로 DB Field에 넣겠다.
         # SpringPhysicalNamingStrategy 를 쓰면 myEmail 을 my_email 와 같이 바꿔줌
@@ -41,3 +41,7 @@ spring:
       
 kakao:
   key: dong1234
+  
+gmailPassword:
+ key: Dh1029Hj!@
+  

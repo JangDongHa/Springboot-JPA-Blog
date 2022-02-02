@@ -1,6 +1,7 @@
 let index = {
 	init: function() {
 		$("#btn-save").on("click", () => { // function(){} 대신 ()=>{} 을 쓰는 이유 : this를 binding 하기 위해
+			$("[btn-save]").attr("disabled", true);
 			this.save();
 		}); // btn-save가 클릭이 되면
 		$("#btn-update").on("click", () => {

@@ -140,6 +140,7 @@ public class UserController {
 				.password(kakaoKey)
 				.email(kakaoEmail)
 				.oauth("kakao")
+				.authStatus(true)
 				.build();
 		// 가입자 혹은 비가입자인지 확인
 		if (userService.findUser(kakaoEmail) == null) { // This is new User
@@ -159,7 +160,27 @@ public class UserController {
 	
 	@GetMapping("/user/authEmail")
 	public String authEmailForm() {
-		return "user/authEmail";
+		return "/user/authEmail";
 	}
+	
+	@GetMapping("/auth/signupConfirm")
+	public String signupConfirm(String authKey, String email) {
+		System.out.println("/auth/signupConfirm");
+		User authUser = userService.findUser(email);
+		
+//		System.out.println("authUser Email : " + authUser.getEmail());
+//		System.out.println("authUser AuthKey : " + authUser.getAuthKey());
+//		
+//		System.out.println("import Email : " + email);
+//		System.out.println("import authKey : " + authKey);
+		if (authUser.getEmail().equals(email))
+			if (authUser.getAuthKey().equals(authKey)) { // 인증 성공
+				authUser.setAuthStatus(true);
+				userService.updateUser(authUser, false);
+			}
+		
+		return "index";
+	}
+	
 	
 }

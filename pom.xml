@@ -16,6 +16,8 @@
 	<description>Blog project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
+		
+
 	</properties>
 	<dependencies>
 		<!--추가 라이브러리 시작 -->
@@ -103,6 +105,13 @@
 			<artifactId>simple-java-mail</artifactId>
 			<version>6.0.4</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.5.6</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
